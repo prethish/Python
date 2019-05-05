@@ -4,6 +4,7 @@ from core import config
 from core import ProgressPrint
 from core import logger
 
+
 class TestSubClass(config.Borg):
     def __init__(self, var):
         config.Borg.__init__(self)
@@ -24,7 +25,6 @@ class TestBorg(test_base.TestBase):
             instance_a.var,
             "new"
         )
-
 
 
 class TestEnvVariableExpander(test_base.TestBase):

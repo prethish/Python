@@ -16,38 +16,40 @@ logger = logger.setup_logger()
 
 
 class Job(object):
-    def __init__(self,func,args,kwargs):
+    def __init__(self, func, args, kwargs):
         self._func = func
         self._args = args
         self._kwargs = kwargs
         self.out = None
 
     def process(self):
-        self.out = self._func(*self._args,**self._kwargs)
+        self.out = self._func(*self._args, **self._kwargs)
 
 
 class PoolWorker(threading.Thread):
-    _kill_cmd="DIE"
-    def __init__(self, work_queue,*args,**kwargs):
-        super(PoolWorker, self).__init__(*args,**kwargs)
+    _kill_cmd = "DIE"
+
+    def __init__(self, work_queue, *args, **kwargs):
+        super(PoolWorker, self).__init__(*args, **kwargs)
         self._work_queue = work_queue
 
     def run(self):
         while True:
             next_job = self._work_queue.get()
-            if isinstance(next_job,str) and next_job == self._kill_cmd:
+            if isinstance(next_job, str) and next_job == self._kill_cmd:
                 logger.debug("Recieved Kill cmd.")
                 break
             try:
                 next_job.process()
             except Exception as e:
-                logger.error("Job with %s has errored. %s\n%s",next_job._args,e.message,e.args)
+                logger.error("Job with %s has errored. %s\n%s",
+                             next_job._args, e.message, e.args)
             self._work_queue.task_done()
         logger.debug("Finished Processing.")
 
 
 class Pool(object):
-    def __init__(self,n_workers):
+    def __init__(self, n_workers):
 
         self._work_queue = Queue.Queue()
         self._workers = []
@@ -72,7 +74,6 @@ class Pool(object):
         self._work_queue.join()
         progress.stop()
 
-
     def terminate(self):
         logger.debug("Terminating all threads")
         try:
@@ -84,11 +85,11 @@ class Pool(object):
         for thr in self._workers:
             self._work_queue.put("DIE")
 
-    def add_job(self,*args,**kwargs):
-        logger.debug("Added new job with %s",args)
+    def add_job(self, *args, **kwargs):
+        logger.debug("Added new job with %s", args)
         self._work_queue.put(
-            Job(self._current_func,args,kwargs)
+            Job(self._current_func, args, kwargs)
         )
 
-    def set_job(self,func):
+    def set_job(self, func):
         self._current_func = func

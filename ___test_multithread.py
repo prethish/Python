@@ -3,15 +3,17 @@ import os
 from core import thread_worker
 import urllib2
 from HTMLParser import HTMLParser
+
+
 parent_folder = os.path.dirname(__file__)
 sys.path.append(parent_folder)
+
 
 def check_website(url):
     try:
         urllib2.urlopen(url)
     except Exception as e:
         print e
-
 
 
 class LinksParser(HTMLParser, object):
@@ -39,7 +41,6 @@ html = response.read().decode(encoding)
 links_parser = LinksParser()
 links_parser.feed(html)
 response.close()
-
 
 # starting the pool
 workers_poll = thread_worker.Pool(10)

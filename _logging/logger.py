@@ -26,12 +26,15 @@ class ColorFormatter(logging.Formatter):
         )
 
         if new_record.threadName != "MainThread":
-            new_record.msg = "{} {}".format(new_record.threadName, new_record.msg) 
+            new_record.msg = "{} {}".format(
+                new_record.threadName, new_record.msg
+            )
         # now we can let standart formatting take care of the rest
         return super(ColorFormatter, self).format(new_record, *args, **kwargs)
 
 
-def setup_logger(level_no=logging.DEBUG,format_string="%(levelname)s %(message)s"):
+def setup_logger(level_no=logging.DEBUG,
+                 format_string="%(levelname)s %(message)s"):
     # we want to display only levelname and message
     formatter = ColorFormatter(format_string)
 
@@ -44,4 +47,3 @@ def setup_logger(level_no=logging.DEBUG,format_string="%(levelname)s %(message)s
     logger.addHandler(handler)
     logger.setLevel(level_no)
     return logger
-

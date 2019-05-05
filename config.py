@@ -123,5 +123,3 @@ class Config(object):
 
         with open(self.file_path, 'w') as f:
             json.dump(data, f)
-
-
