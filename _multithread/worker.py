@@ -1,10 +1,11 @@
-
-"""Module to help generic ppol of thread workers.
+"""Module to help create generic ppol of thread workers. The goal I had in mind
+was to 2 spawn a fixed number of workers and have them reused for running tasks.
 
 Reference:
 
     http://code.activestate.com/recipes/576519-thread-pool-with-same-api-as-multiprocessingpool/
 """
+from collections import namedtuple
 import Queue
 import threading
 
@@ -13,6 +14,10 @@ from core import logger
 
 
 logger = logger.setup_logger()
+JobInfo = namedtuple(
+    'JobInfo',
+    ['function', 'tag']
+)
 
 
 class Job(object):
@@ -23,7 +28,9 @@ class Job(object):
         self.out = None
 
     def process(self):
+        logger.debug("Running Task for %s", self._args)
         self.out = self._func(*self._args, **self._kwargs)
+        logger.debug("Finished Task for %s", self._args)
 
 
 class PoolWorker(threading.Thread):
@@ -53,7 +60,7 @@ class Pool(object):
 
         self._work_queue = Queue.Queue()
         self._workers = []
-        self._current_func = None
+        self._func_list = []
         for id in xrange(n_workers):
             thr = PoolWorker(self._work_queue)
             thr.start()
@@ -85,11 +92,20 @@ class Pool(object):
         for thr in self._workers:
             self._work_queue.put("DIE")
 
-    def add_job(self, *args, **kwargs):
-        logger.debug("Added new job with %s", args)
-        self._work_queue.put(
-            Job(self._current_func, args, kwargs)
-        )
+    def _get_job(self, tag):
+        for func in self._func_list:
+            if func.tag == tag:
+                return func.function
 
-    def set_job(self, func):
-        self._current_func = func
+    def add_job_data(self, *args, **kwargs):
+        tag = kwargs.pop("tag")
+        job = self._get_job(tag)
+        self._work_queue.put(
+            Job(job, args, kwargs)
+        )
+        logger.debug("Added %s job with %s", tag, args)
+
+    def set_job(self, func, tag):
+        self._func_list.append(
+            JobInfo(func, tag)
+        )

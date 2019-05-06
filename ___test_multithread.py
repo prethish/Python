@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 from core import thread_worker
 import urllib2
 from HTMLParser import HTMLParser
@@ -44,20 +45,20 @@ response.close()
 
 # starting the pool
 workers_poll = thread_worker.Pool(10)
-workers_poll.set_job(check_website)
+workers_poll.set_job(check_website, "website")
 for link in links_parser.links:
-    workers_poll.add_job(link)
+    workers_poll.add_job_data(link, tag="website")
 
-workers_poll.wait()
+# workers_poll.wait()
 
-import time
+
 def timer(sec):
     time.sleep(sec)
     print "Finished Sleep."
 
-workers_poll.set_job(timer)
+workers_poll.set_job(timer, "time")
 
 for i in xrange(10):
-    workers_poll.add_job(.1)
+    workers_poll.add_job_data(.1, tag="time")
 
 workers_poll.join()

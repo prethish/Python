@@ -34,9 +34,9 @@ class ColorFormatter(logging.Formatter):
 
 
 def setup_logger(level_no=logging.DEBUG,
-                 format_string="%(levelname)s %(message)s"):
+                 format_string="%(asctime)s %(levelname)s %(message)s"):
     # we want to display only levelname and message
-    formatter = ColorFormatter(format_string)
+    formatter = ColorFormatter(format_string, "%H:%M:%S ")
 
     # this handler will write to sys.stderr by default
     handler = logging.StreamHandler()
