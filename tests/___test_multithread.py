@@ -1,9 +1,11 @@
 import sys
 import os
 import time
-from core import thread_worker
 import urllib2
 from HTMLParser import HTMLParser
+
+import test_base
+from core import thread_worker
 
 
 parent_folder = os.path.dirname(__file__)
