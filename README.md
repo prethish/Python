@@ -2,4 +2,7 @@
 
 It currently does not test the multithread yet, I have only written a test python script for it.
 
-``` make test```
+```
+make test
+make test_multithread
+```
