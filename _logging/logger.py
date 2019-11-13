@@ -2,7 +2,7 @@
 import logging
 import copy
 
-import ansi
+from . import ansi
 
 LOG_COLORS = {
     logging.ERROR: ansi.Fore.RED,

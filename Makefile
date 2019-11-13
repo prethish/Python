@@ -1,4 +1,4 @@
-.PHONY: test doc-serve test_multithread
+.PHONY: test doc-serve test_multithread test_multiprocess
 
 NAME = python_general
 AUTHORS = Prethish Bhasuran
@@ -7,6 +7,10 @@ VERSION = 0.0.0
 test_multithread:
 	@echo "Temp testing for threading, will be added to tests"
 	python tests/___test_multithread.py
+
+test_multiprocess:
+	@echo "Temp testing for threading, will be added to tests"
+	python tests/___test_multiprocess.py
 
 test:
 	@echo "Running tests"
